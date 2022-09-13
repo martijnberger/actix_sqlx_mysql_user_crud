@@ -63,8 +63,7 @@ async fn get_group_by_id_returns_group_when_id_is_valid() -> Result<(), sqlx::Er
 }
 
 #[actix_rt::test]
-async fn update_group_returns_1_when_group_has_been_updated() -> Result<(), sqlx::Error>
-{
+async fn update_group_returns_1_when_group_has_been_updated() -> Result<(), sqlx::Error> {
     let db = init_db_context().await;
 
     let group_name = randomize_string("testers");

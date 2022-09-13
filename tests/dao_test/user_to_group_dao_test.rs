@@ -4,8 +4,7 @@ use sqlx_user_crud::model::{Group, User};
 use uuid::Uuid;
 
 #[actix_rt::test]
-async fn add_user_groups_returns_1_when_user_is_associated_with_group(
-) -> Result<(), sqlx::Error> {
+async fn add_user_groups_returns_1_when_user_is_associated_with_group() -> Result<(), sqlx::Error> {
     let db = init_db_context().await;
 
     let user = User {
@@ -31,8 +30,8 @@ async fn add_user_groups_returns_1_when_user_is_associated_with_group(
 }
 
 #[actix_rt::test]
-async fn add_user_groups_returns_3_when_user_is_associated_with_3_groups(
-) -> Result<(), sqlx::Error> {
+async fn add_user_groups_returns_3_when_user_is_associated_with_3_groups() -> Result<(), sqlx::Error>
+{
     let db = init_db_context().await;
 
     let user = User {
@@ -67,8 +66,7 @@ async fn add_user_groups_returns_3_when_user_is_associated_with_3_groups(
 }
 
 #[actix_rt::test]
-async fn add_user_groups_returns_err_when_group_does_not_exist(
-) -> Result<(), sqlx::Error> {
+async fn add_user_groups_returns_err_when_group_does_not_exist() -> Result<(), sqlx::Error> {
     let db = init_db_context().await;
 
     let user = User {
@@ -90,8 +88,7 @@ async fn add_user_groups_returns_err_when_group_does_not_exist(
 }
 
 #[actix_rt::test]
-async fn add_user_groups_returns_err_when_user_does_not_exist() -> Result<(), sqlx::Error>
-{
+async fn add_user_groups_returns_err_when_user_does_not_exist() -> Result<(), sqlx::Error> {
     let db = init_db_context().await;
 
     let group_name = randomize_string("hackers");
@@ -232,8 +229,8 @@ async fn delete_by_group_id_returns_number_of_rows_deleted() -> Result<(), sqlx:
 }
 
 #[actix_rt::test]
-async fn update_user_groups_deletes_rows_when_users_group_vec_is_empty(
-) -> Result<(), sqlx::Error> {
+async fn update_user_groups_deletes_rows_when_users_group_vec_is_empty() -> Result<(), sqlx::Error>
+{
     let db = init_db_context().await;
     let user = User {
         id: Uuid::new_v4().to_string(),

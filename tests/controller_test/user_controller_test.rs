@@ -76,8 +76,7 @@ async fn post_user_returns_202_when_user_is_valid() -> () {
 }
 
 #[actix_rt::test]
-async fn post_user_returns_202_when_user_and_groups_are_valid() -> Result<(), sqlx::Error>
-{
+async fn post_user_returns_202_when_user_and_groups_are_valid() -> Result<(), sqlx::Error> {
     let app_state = init_app_state().await;
     let mut app = test::init_service(
         App::new()

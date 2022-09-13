@@ -62,11 +62,7 @@ impl<'c> Table<'c, Group> {
         .await
     }
 
-    pub async fn update_group(
-        &self,
-        current: &str,
-        update: &str,
-    ) -> Result<u64, sqlx::Error> {
+    pub async fn update_group(&self, current: &str, update: &str) -> Result<u64, sqlx::Error> {
         sqlx::query(
             r#"
             UPDATE `groups`

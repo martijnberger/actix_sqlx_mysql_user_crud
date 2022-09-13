@@ -62,7 +62,7 @@ impl Database<'_> {
         Database {
             users: Arc::from(Table::new(pool.clone())),
             groups: Arc::from(Table::new(pool.clone())),
-            users_to_groups: Arc::from(JoinTable::new(pool.clone())),
+            users_to_groups: Arc::from(JoinTable::new(pool)),
         }
     }
 }

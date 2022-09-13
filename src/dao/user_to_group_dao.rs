@@ -31,7 +31,7 @@ impl<'c> JoinTable<'c, User, Group> {
         user_id: &String,
         groups: &Vec<Group>,
     ) -> Result<u64, sqlx::Error> {
-        if 0 == groups.len() {
+        if groups.is_empty() {
             Ok(0)
         } else {
             let insert_statement = build_insert_statement(groups.len());
@@ -45,10 +45,7 @@ impl<'c> JoinTable<'c, User, Group> {
         }
     }
 
-    pub async fn get_groups_by_user_id(
-        &self,
-        user_id: &String,
-    ) -> Result<Vec<Group>, sqlx::Error> {
+    pub async fn get_groups_by_user_id(&self, user_id: &String) -> Result<Vec<Group>, sqlx::Error> {
         sqlx::query_as(
             r#"
             select * from `groups` as `a`
@@ -90,7 +87,7 @@ impl<'c> JoinTable<'c, User, Group> {
     }
 
     pub async fn update_user_groups(&self, user: &User) -> Result<u64, sqlx::Error> {
-        if 0 == user.groups.len() {
+        if user.groups.is_empty() {
             self.delete_by_user_id(&user.id).await
         } else {
             let deleted = self.delete_by_user_id(&user.id).await?;
@@ -100,7 +97,7 @@ impl<'c> JoinTable<'c, User, Group> {
     }
 }
 
-static DEFAULT_INSERT: &'static str = r#"
+static DEFAULT_INSERT: &str = r#"
     INSERT INTO `users_to_groups` (`user_id`, `group_id`)
     VALUES (?,?)
 "#;
