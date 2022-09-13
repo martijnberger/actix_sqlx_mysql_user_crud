@@ -16,7 +16,7 @@ async fn add_user_returns_1() -> Result<(), sqlx::Error> {
     let result = db.users.add_user(&user).await;
 
     assert!(result.is_ok());
-    assert_eq!(1, result.unwrap());
+    assert_eq!(1, result.unwrap().rows_affected());
 
     Ok(())
 }
@@ -43,7 +43,7 @@ async fn add_user_returns_err_when_duplicate_username_is_added() -> Result<(), s
     };
 
     let result = db.users.add_user(&original).await?;
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
 
     let result = db.users.add_user(&duplicate).await;
     assert!(result.is_err());
@@ -96,7 +96,7 @@ async fn update_user_returns_zero_when_user_does_not_exist() -> () {
     let result = db.users.update_user(&user).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(0, result);
+    assert_eq!(0, result.rows_affected());
 }
 
 #[actix_rt::test]
@@ -118,7 +118,7 @@ async fn update_user_returns_1_when_user_exists() -> Result<(), sqlx::Error> {
     let result = db.users.update_user(&updated_user).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
     Ok(())
 }
 
@@ -130,7 +130,7 @@ async fn delete_user_returns_0_when_user_does_not_exist() -> () {
     let result = db.users.delete_user(&id).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(0, result);
+    assert_eq!(0, result.rows_affected());
 }
 
 #[actix_rt::test]
@@ -149,6 +149,6 @@ async fn delete_user_returns_1_when_user_exists() -> Result<(), sqlx::Error> {
     let result = db.users.delete_user(&user.id).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
     Ok(())
 }

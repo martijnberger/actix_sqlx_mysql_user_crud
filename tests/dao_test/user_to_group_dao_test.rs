@@ -154,7 +154,7 @@ async fn delete_by_user_id_returns_0_when_user_id_does_not_exist() -> () {
     let result = db.users_to_groups.delete_by_user_id(&user_id).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(0, result);
+    assert_eq!(0, result.rows_affected());
 }
 
 #[actix_rt::test]
@@ -182,7 +182,7 @@ async fn delete_by_user_id_returns_number_of_rows_deleted() -> Result<(), sqlx::
     let result = db.users_to_groups.delete_by_user_id(&user.id).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
     Ok(())
 }
 
@@ -193,7 +193,7 @@ async fn delete_by_group_id_returns_0_when_group_id_does_not_exist() -> () {
     let result = db.users_to_groups.delete_by_group_id(0).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(0, result);
+    assert_eq!(0, result.rows_affected());
 }
 
 #[actix_rt::test]
@@ -224,7 +224,7 @@ async fn delete_by_group_id_returns_number_of_rows_deleted() -> Result<(), sqlx:
     let result = db.users_to_groups.delete_by_group_id(group.id).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
     Ok(())
 }
 

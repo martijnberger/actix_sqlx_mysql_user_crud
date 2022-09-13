@@ -1,10 +1,9 @@
 use super::Group;
 use super::JoinTable;
 use super::User;
-use sqlx::mysql::MySqlQueryAs;
 
 impl<'c> JoinTable<'c, User, Group> {
-    pub async fn create_table(&self) -> Result<u64, sqlx::Error> {
+    pub async fn create_table(&self) -> Result<sqlx::mysql::MySqlQueryResult, sqlx::Error> {
         sqlx::query(
             r#"
             CREATE TABLE IF NOT EXISTS `users_to_groups`
@@ -20,7 +19,7 @@ impl<'c> JoinTable<'c, User, Group> {
         .await
     }
 
-    pub async fn drop_table(&self) -> Result<u64, sqlx::Error> {
+    pub async fn drop_table(&self) -> Result<sqlx::mysql::MySqlQueryResult, sqlx::Error> {
         sqlx::query("DROP TABLE IF EXISTS users_to_groups")
             .execute(&*self.pool)
             .await
@@ -41,7 +40,7 @@ impl<'c> JoinTable<'c, User, Group> {
                 query = query.bind(user_id).bind(group.id)
             }
 
-            query.execute(&*self.pool).await
+            Ok(query.execute(&*self.pool).await?.rows_affected())
         }
     }
 
@@ -60,7 +59,10 @@ impl<'c> JoinTable<'c, User, Group> {
         .await
     }
 
-    pub async fn delete_by_user_id(&self, user_id: &String) -> Result<u64, sqlx::Error> {
+    pub async fn delete_by_user_id(
+        &self,
+        user_id: &String,
+    ) -> Result<sqlx::mysql::MySqlQueryResult, sqlx::Error> {
         sqlx::query(
             r#"
             DELETE
@@ -73,7 +75,10 @@ impl<'c> JoinTable<'c, User, Group> {
         .await
     }
 
-    pub async fn delete_by_group_id(&self, group_id: u64) -> Result<u64, sqlx::Error> {
+    pub async fn delete_by_group_id(
+        &self,
+        group_id: u64,
+    ) -> Result<sqlx::mysql::MySqlQueryResult, sqlx::Error> {
         sqlx::query(
             r#"
             DELETE
@@ -88,11 +93,11 @@ impl<'c> JoinTable<'c, User, Group> {
 
     pub async fn update_user_groups(&self, user: &User) -> Result<u64, sqlx::Error> {
         if user.groups.is_empty() {
-            self.delete_by_user_id(&user.id).await
+            Ok(self.delete_by_user_id(&user.id).await?.rows_affected())
         } else {
             let deleted = self.delete_by_user_id(&user.id).await?;
             let added = self.add_user_groups(&user.id, &user.groups).await?;
-            Ok(added + deleted)
+            Ok(added + deleted.rows_affected())
         }
     }
 }

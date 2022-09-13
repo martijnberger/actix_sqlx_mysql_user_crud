@@ -5,15 +5,15 @@ use std::sync::Arc;
 
 pub struct Table<'c, T>
 where
-    T: FromRow<'c, MySqlRow<'c>>,
+    T: FromRow<'c, MySqlRow>,
 {
     pub pool: Arc<MySqlPool>,
-    _from_row: fn(&MySqlRow<'c>) -> Result<T, sqlx::Error>,
+    _from_row: fn(&'c MySqlRow) -> sqlx::Result<T>,
 }
 
 impl<'c, T> Table<'c, T>
 where
-    T: FromRow<'c, MySqlRow<'c>>,
+    T: FromRow<'c, MySqlRow>,
 {
     fn new(pool: Arc<MySqlPool>) -> Self {
         Table {
@@ -25,20 +25,20 @@ where
 
 pub struct JoinTable<'c, T1, T2>
 where
-    T1: FromRow<'c, MySqlRow<'c>>,
-    T2: FromRow<'c, MySqlRow<'c>>,
+    T1: FromRow<'c, MySqlRow>,
+    T2: FromRow<'c, MySqlRow>,
 {
     pub pool: Arc<MySqlPool>,
     _from_row: (
-        fn(&MySqlRow<'c>) -> Result<T1, sqlx::Error>,
-        fn(&MySqlRow<'c>) -> Result<T2, sqlx::Error>,
+        fn(&'c MySqlRow) -> sqlx::Result<T1>,
+        fn(&'c MySqlRow) -> sqlx::Result<T2>,
     ),
 }
 
 impl<'c, T1, T2> JoinTable<'c, T1, T2>
 where
-    T1: FromRow<'c, MySqlRow<'c>>,
-    T2: FromRow<'c, MySqlRow<'c>>,
+    T1: FromRow<'c, MySqlRow>,
+    T2: FromRow<'c, MySqlRow>,
 {
     fn new(pool: Arc<MySqlPool>) -> Self {
         JoinTable {
@@ -56,7 +56,7 @@ pub struct Database<'c> {
 
 impl Database<'_> {
     pub async fn new(sql_url: &str) -> Database<'_> {
-        let pool = MySqlPool::new(sql_url).await.unwrap();
+        let pool = MySqlPool::connect(sql_url).await.unwrap();
         let pool = Arc::new(pool);
 
         Database {

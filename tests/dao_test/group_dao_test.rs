@@ -10,7 +10,7 @@ async fn add_group_returns_1_when_group_is_valid() -> () {
     let result = db.groups.add_group(&group_name).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
 }
 
 #[actix_rt::test]
@@ -75,7 +75,7 @@ async fn update_group_returns_1_when_group_has_been_updated() -> Result<(), sqlx
         .await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
     Ok(())
 }
 
@@ -86,7 +86,7 @@ async fn update_group_returns_0_when_group_does_not_exist() -> () {
     let result = db.groups.update_group("not found", "still not found").await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(0, result);
+    assert_eq!(0, result.rows_affected());
 }
 
 #[actix_rt::test]
@@ -99,7 +99,7 @@ async fn delete_group_returns_1_when_group_can_be_deleted() -> Result<(), sqlx::
     let result = db.groups.delete_group(&group_name).await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(1, result);
+    assert_eq!(1, result.rows_affected());
     Ok(())
 }
 
@@ -110,5 +110,5 @@ async fn delete_group_returns_0_when_group_does_not_exist() -> () {
     let result = db.groups.delete_group("not found").await;
     assert!(result.is_ok());
     let result = result.unwrap();
-    assert_eq!(0, result);
+    assert_eq!(0, result.rows_affected());
 }

@@ -73,14 +73,19 @@ async fn patch_user(user: web::Json<User>, app_state: web::Data<AppState<'_>>) -
     let x = app_state.context.users.update_user(&user).await;
 
     match x {
-        Ok(0) => HttpResponse::NotFound().finish(),
-        Ok(_) => {
-            let _ = app_state
-                .context
-                .users_to_groups
-                .update_user_groups(&user)
-                .await;
-            HttpResponse::Accepted().json(user)
+        Ok(r) => {
+            let rows = r.rows_affected();
+            match rows {
+                0 => HttpResponse::NotFound().finish(),
+                _ => {
+                    let _ = app_state
+                        .context
+                        .users_to_groups
+                        .update_user_groups(&user)
+                        .await;
+                    HttpResponse::Accepted().json(user)
+                }
+            }
         }
         _ => HttpResponse::InternalServerError().finish(),
     }
@@ -93,8 +98,13 @@ async fn delete_user(id: web::Path<String>, app_state: web::Data<AppState<'_>>) 
     let x = app_state.context.users.delete_user(id.as_str()).await;
 
     match x {
-        Ok(0) => HttpResponse::NotFound().finish(),
-        Ok(_) => HttpResponse::Ok().finish(),
+        Ok(r) => {
+            let rows = r.rows_affected();
+            match rows {
+                0 => HttpResponse::NotFound().finish(),
+                _ => HttpResponse::Ok().finish(),
+            }
+        }
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
